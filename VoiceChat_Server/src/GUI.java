@@ -3,14 +3,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
-/*
- * To change this template, choose Tools | Templates and open the template in
- * the editor.
- */
-/**
- *
- * @author dosse
- */
 public class GUI extends javax.swing.JFrame {
 
     /**

@@ -74,7 +74,7 @@ public class AudioChannel extends Thread {
                         } else {
                             GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(m.getData()));
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            for (;;) {
+                            while(true){
                                 int b = gis.read();
                                 if (b == -1) {
                                     break;
