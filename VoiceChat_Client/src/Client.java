@@ -23,7 +23,10 @@ public class Client extends Thread {
             ObjectInputStream fromServer = new ObjectInputStream(socket.getInputStream());  
             ObjectOutputStream toServer = new ObjectOutputStream(socket.getOutputStream());
             try {
-                Utils.sleep(100); 
+                try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {
+        }
                 micThread = new MicThread(toServer);  
                 micThread.start(); 
             } catch (Exception e) { 
@@ -51,7 +54,10 @@ public class Client extends Thread {
                     ArrayList<AudioChannel> channelToKill=new ArrayList<AudioChannel>();
                     for(AudioChannel channel:audioChannels) if(channel.canKill()) channelToKill.add(channel);
                     for(AudioChannel c:channelToKill){c.closeAndKill(); audioChannels.remove(c);}
-                    Utils.sleep(1);
+                    try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+            }
                 }
             }
         } catch (Exception e) { 

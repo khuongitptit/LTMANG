@@ -54,7 +54,10 @@ public class AudioChannel extends Thread {
             speaker.start();
             while(true){
                 if (queue.isEmpty()) { 
-                    Utils.sleep(10);
+                    try {
+            Thread.sleep(10);
+        } catch (InterruptedException ex) {
+        }
                     continue;
                 } else {
                     lastPacketTime = System.nanoTime();

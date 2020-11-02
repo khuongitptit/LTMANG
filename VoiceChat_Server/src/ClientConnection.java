@@ -6,25 +6,24 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
-
 public class ClientConnection extends Thread {
 
-    private Server server; 
-    private Socket socket; 
-    private ObjectInputStream in; 
+    private Server server;
+    private Socket socket;
+    private ObjectInputStream in;
     private ObjectOutputStream out;
-    private long channelID; 
+    private long channelID;
     private ArrayList<Message> toSend = new ArrayList<Message>();
 
-    public InetAddress getInetAddress() { 
+    public InetAddress getInetAddress() {
         return socket.getInetAddress();
     }
 
-    public int getPort() { 
+    public int getPort() {
         return socket.getPort();
     }
 
-    public long getchannelID() { 
+    public long getchannelID() {
         return channelID;
     }
 
@@ -35,7 +34,7 @@ public class ClientConnection extends Thread {
         channelID = (addr[0] << 48 | addr[1] << 32 | addr[2] << 24 | addr[3] << 16) + socket.getPort();
     }
 
-    public void addToQueue(Message m) { 
+    public void addToQueue(Message m) {
         try {
             toSend.add(m);
         } catch (Throwable t) {
@@ -45,9 +44,9 @@ public class ClientConnection extends Thread {
     @Override
     public void run() {
         try {
-            out = new ObjectOutputStream(socket.getOutputStream()); 
+            out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-        } catch (IOException ex) { 
+        } catch (IOException ex) {
             try {
                 socket.close();
                 Log.add("ERROR " + getInetAddress() + ":" + getPort() + " " + ex);
@@ -55,29 +54,32 @@ public class ClientConnection extends Thread {
             }
             stop();
         }
-        while(true){
+        while (true) {
             try {
                 if (socket.getInputStream().available() > 0) {
-                    Message toBroadcast = (Message) in.readObject(); 
-                    if (toBroadcast.getchannelID()== -1) { 
+                    Message toBroadcast = (Message) in.readObject();
+                    if (toBroadcast.getchannelID() == -1) {
                         toBroadcast.setchannelID(channelID);
                         toBroadcast.setTimestamp(System.nanoTime() / 1000000L);
                         server.addToBroadcastQueue(toBroadcast);
                     } else {
-                        continue; 
+                        continue;
                     }
                 }
                 try {
                     if (!toSend.isEmpty()) {
-                        Message toClient = toSend.get(0); 
+                        Message toClient = toSend.get(0);
                         if (!(toClient.getData() instanceof SoundPacket) || toClient.getTimestamp() + toClient.getTtl() < System.nanoTime() / 1000000L) { //is the message too old or of an unknown type?
-                            Log.add("Dropping packet from " + toClient.getchannelID()+ " to " + channelID);
+                            Log.add("Dropping packet from " + toClient.getchannelID() + " to " + channelID);
                             continue;
                         }
-                        out.writeObject(toClient); 
+                        out.writeObject(toClient);
                         toSend.remove(toClient);
                     } else {
-                        Utils.sleep(10); 
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException ex) {
+                        }
                     }
                 } catch (Throwable t) {
                     if (t instanceof IOException) {
@@ -86,7 +88,7 @@ public class ClientConnection extends Thread {
                         continue;
                     }
                 }
-            } catch (Exception ex) { 
+            } catch (Exception ex) {
                 try {
                     socket.close();
                 } catch (IOException ex1) {

@@ -59,7 +59,10 @@ public class MicThread extends Thread {
                     stop();
                 }
             } else {
-                Utils.sleep(10); 
+                try {
+            Thread.sleep(10);
+        } catch (InterruptedException ex) {
+        }
             }
         }
     }

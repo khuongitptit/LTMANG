@@ -3,8 +3,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
-
-
 /*
  * To change this template, choose Tools | Templates and open the template in
  * the editor.
@@ -20,6 +18,8 @@ public class GUI extends javax.swing.JFrame {
      */
     public GUI() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        this.setTitle("Voice chat Server");
     }
 
     /**
@@ -125,9 +125,9 @@ public class GUI extends javax.swing.JFrame {
             @Override
             public void run() {
                 try {
-                    new Server(Integer.parseInt(txtPort.getText()),upnp.isSelected());
+                    new Server(Integer.parseInt(txtPort.getText()), upnp.isSelected());
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(rootPane,ex,getTitle(),JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(rootPane, ex, getTitle(), JOptionPane.ERROR_MESSAGE);
                     System.exit(0);
                 }
             }
@@ -136,7 +136,10 @@ public class GUI extends javax.swing.JFrame {
             @Override
             public void run() {
                 for (;;) {
-                    Utils.sleep(100);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                    }
                     if (!Log.get().equals(log.getText())) {
                         log.setText(Log.get());
                         log.getCaret().setDot(Log.get().length());

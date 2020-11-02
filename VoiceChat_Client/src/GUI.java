@@ -27,7 +27,10 @@ public class GUI extends javax.swing.JFrame {
                     System.exit(0);
                 }
                 for (;;) {
-                    Utils.sleep(10);
+                    try {
+            Thread.sleep(10);
+        } catch (InterruptedException ex) {
+        }
                     if(mic.available()>0){
                         byte[] buff=new byte[SoundPacket.defaultDataLength];
                         mic.read(buff,0,buff.length);
@@ -51,6 +54,8 @@ public class GUI extends javax.swing.JFrame {
         initComponents();
         micTester=new MicTester();
         micTester.start();
+        this.setLocationRelativeTo(null);
+        this.setTitle("Voice chat Client");
     }
 
     /**
@@ -141,7 +146,7 @@ public class GUI extends javax.swing.JFrame {
                                 .addComponent(btnConnect, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(187, 187, 187)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(26, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(

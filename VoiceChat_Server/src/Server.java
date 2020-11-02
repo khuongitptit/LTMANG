@@ -14,26 +14,29 @@ import org.teleal.cling.support.igd.PortMappingListener;
 import org.teleal.cling.support.model.PortMapping;
 
 public class Server {
-    
-    private ArrayList<Message> broadCastQueue = new ArrayList<Message>();    
+
+    private ArrayList<Message> broadCastQueue = new ArrayList<Message>();
     private ArrayList<ClientConnection> clients = new ArrayList<ClientConnection>();
     private int port;
-    
-    private UpnpService u; 
-    
-    public void addToBroadcastQueue(Message m) { 
+
+    private UpnpService u;
+
+    public void addToBroadcastQueue(Message m) {
         try {
             broadCastQueue.add(m);
         } catch (Throwable t) {
-            Utils.sleep(1);
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+            }
             addToBroadcastQueue(m);
         }
     }
     private ServerSocket s;
-    
-    public Server(int port, boolean upnp) throws Exception{
+
+    public Server(int port, boolean upnp) throws Exception {
         this.port = port;
-        if(upnp){
+        if (upnp) {
             Log.add("Setting up NAT Port Forwarding...");
             try {
                 Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
@@ -74,14 +77,14 @@ public class Server {
             u.getControlPoint().search();
         }
         try {
-            s = new ServerSocket(port); 
+            s = new ServerSocket(port);
             Log.add("Port " + port + ": server started");
         } catch (IOException ex) {
             Log.add("Server error " + ex + "(port " + port + ")");
-            throw new Exception("Error "+ex);
+            throw new Exception("Error " + ex);
         }
-        new BroadcastThread().start(); 
-        while(true){
+        new BroadcastThread().start();
+        while (true) {
             try {
                 Socket c = s.accept();
                 ClientConnection cc = new ClientConnection(this, c);
@@ -95,37 +98,43 @@ public class Server {
 
     private void addToClients(ClientConnection cc) {
         try {
-            clients.add(cc); 
+            clients.add(cc);
         } catch (Throwable t) {
-            Utils.sleep(1);
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+            }
             addToClients(cc);
         }
     }
 
     private class BroadcastThread extends Thread {
-        
+
         public BroadcastThread() {
         }
-        
+
         @Override
         public void run() {
-            while(true){
+            while (true) {
                 try {
                     ArrayList<ClientConnection> toRemove = new ArrayList<ClientConnection>();
                     for (ClientConnection cc : clients) {
-                        if (!cc.isAlive()) { 
+                        if (!cc.isAlive()) {
                             Log.add("Dead connection closed: " + cc.getInetAddress() + ":" + cc.getPort() + " on port " + port);
                             toRemove.add(cc);
                         }
                     }
-                    clients.removeAll(toRemove); 
-                    if (broadCastQueue.isEmpty()) { 
-                        Utils.sleep(10); 
+                    clients.removeAll(toRemove);
+                    if (broadCastQueue.isEmpty()) {
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException ex) {
+                        }
                         continue;
-                    } else { 
+                    } else {
                         Message m = broadCastQueue.get(0);
-                        for (ClientConnection cc : clients) { 
-                            if (cc.getchannelID()!= m.getchannelID()) {
+                        for (ClientConnection cc : clients) {
+                            if (cc.getchannelID() != m.getchannelID()) {
                                 cc.addToQueue(m);
                             }
                         }
