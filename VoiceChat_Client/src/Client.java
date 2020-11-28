@@ -5,6 +5,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 
 public class Client extends Thread {
@@ -12,8 +13,9 @@ public class Client extends Thread {
     private Socket socket;
     private ArrayList<AudioChannel> audioChannels = new ArrayList<AudioChannel>();
     private MicThread micThread;
-
-    public Client(String serverIp, int serverPort) throws UnknownHostException, IOException {
+    private GUI gui;
+    public Client(GUI gui, String serverIp, int serverPort) throws UnknownHostException, IOException {
+        this.gui = gui;
         socket = new Socket(serverIp, serverPort);
     }
 
@@ -32,8 +34,7 @@ public class Client extends Thread {
             } catch (Exception e) { 
                 e.printStackTrace();
             }
-            for (;;) { 
-                
+            while(true){
                 if (socket.getInputStream().available() > 0) { 
                     Message in = (Message) (fromServer.readObject()); 
                     AudioChannel sendTo = null; 
@@ -55,12 +56,13 @@ public class Client extends Thread {
                     for(AudioChannel channel:audioChannels) if(channel.canKill()) channelToKill.add(channel);
                     for(AudioChannel c:channelToKill){c.closeAndKill(); audioChannels.remove(c);}
                     try {
-                Thread.sleep(1);
-            } catch (InterruptedException ex) {
-            }
+                        Thread.sleep(1);
+                    } catch (InterruptedException ex) {
+                    }
                 }
             }
         } catch (Exception e) { 
+            JOptionPane.showMessageDialog(gui, "Phòng đã đầy");
             e.printStackTrace();
         }
     }

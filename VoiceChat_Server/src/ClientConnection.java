@@ -14,9 +14,17 @@ public class ClientConnection extends Thread {
     private ObjectOutputStream out;
     private long channelID;
     private ArrayList<Message> toSend = new ArrayList<Message>();
-
+    private String errorMessage;
     public InetAddress getInetAddress() {
         return socket.getInetAddress();
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public int getPort() {
@@ -69,7 +77,7 @@ public class ClientConnection extends Thread {
                 try {
                     if (!toSend.isEmpty()) {
                         Message toClient = toSend.get(0);
-                        if (!(toClient.getData() instanceof SoundPacket) || toClient.getTimestamp() + toClient.getTtl() < System.nanoTime() / 1000000L) { //is the message too old or of an unknown type?
+                        if (!(toClient.getData() instanceof SoundPacket) || toClient.getTimestamp() + toClient.getTtl() < System.nanoTime() / 1000000L) { 
                             Log.add("Dropping packet from " + toClient.getchannelID() + " to " + channelID);
                             continue;
                         }

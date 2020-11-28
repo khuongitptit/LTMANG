@@ -16,9 +16,9 @@ public class AudioChannel extends Thread {
     private int lastSoundPacketLen = SoundPacket.defaultDataLength;
     private long lastPacketTime = System.nanoTime();
 
-    public boolean canKill() { //returns true if it's been a long time since last received packet
+    public boolean canKill() { 
         if (System.nanoTime() - lastPacketTime > 5000000000L) {
-            return true; //5 seconds with no data
+            return true; 
         } else {
             return false;
         }

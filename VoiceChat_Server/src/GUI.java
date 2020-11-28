@@ -112,33 +112,33 @@ public class GUI extends javax.swing.JFrame {
         if (btnStart.getText().equals("Stop")) {
             System.exit(0);
         }
-        new Thread() { //start server in new thread
-
-            @Override
-            public void run() {
-                try {
-                    new Server(Integer.parseInt(txtPort.getText()), upnp.isSelected());
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(rootPane, ex, getTitle(), JOptionPane.ERROR_MESSAGE);
-                    System.exit(0);
-                }
-            }
-        }.start();
-        new Thread() { //start logger
-            @Override
-            public void run() {
-                for (;;) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                    }
-                    if (!Log.get().equals(log.getText())) {
-                        log.setText(Log.get());
-                        log.getCaret().setDot(Log.get().length());
-                    }
-                }
-            }
-        }.start();
+//        new Thread() { //start server in new thread
+//
+//            @Override
+//            public void run() {
+//                try {
+//                    new Server(Integer.parseInt(txtPort.getText()), upnp.isSelected());
+//                } catch (Exception ex) {
+//                    JOptionPane.showMessageDialog(rootPane, ex, getTitle(), JOptionPane.ERROR_MESSAGE);
+//                    System.exit(0);
+//                }
+//            }
+//        }.start();
+//        new Thread() { //start logger
+//            @Override
+//            public void run() {
+//                for (;;) {
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException ex) {
+//                    }
+//                    if (!Log.get().equals(log.getText())) {
+//                        log.setText(Log.get());
+//                        log.getCaret().setDot(Log.get().length());
+//                    }
+//                }
+//            }
+//        }.start();
         txtPort.setEnabled(false);
         btnStart.setText("Stop");
     }//GEN-LAST:event_btnStartActionPerformed

@@ -186,7 +186,7 @@ public class GUI extends javax.swing.JFrame {
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         try {
-            new Client(txtIP.getText(), Integer.parseInt(txtPort.getText())).start(); //connect to specified server at specified port
+            new Client(this, txtIP.getText(), Integer.parseInt(txtPort.getText())).start(); //connect to specified server at specified port
         } catch (Exception ex) { //connection failed
             JOptionPane.showMessageDialog(rootPane, ex,"Error",JOptionPane.ERROR_MESSAGE);
             return;

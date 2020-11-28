@@ -1,5 +1,7 @@
 
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -18,7 +20,6 @@ public class Server {
     private ArrayList<Message> broadCastQueue = new ArrayList<Message>();
     private ArrayList<ClientConnection> clients = new ArrayList<ClientConnection>();
     private int port;
-
     private UpnpService u;
 
     public void addToBroadcastQueue(Message m) {
@@ -87,10 +88,20 @@ public class Server {
         while (true) {
             try {
                 Socket c = s.accept();
-                ClientConnection cc = new ClientConnection(this, c);
-                cc.start();
-                addToClients(cc);
-                Log.add("new client " + c.getInetAddress() + ":" + c.getPort() + " on port " + port);
+                if(ListRoomChat.isRoomAvailable(port)){
+                    ClientConnection cc = new ClientConnection(this, c);
+                    cc.start();
+                    addToClients(cc);
+                    Participant p = new Participant(c.getInetAddress().toString(), c.getPort());
+                    ListRoomChat.addParticipantToRoom(port,p);
+                    ServerGUITest.updateTableAddParticipant(port);
+                    Log.add("New client " + c.getInetAddress() + ":" + c.getPort() + " on port " + port);
+                }else {
+                    DataOutputStream dos = new DataOutputStream(c.getOutputStream());
+                    dos.writeUTF("het cho roi");
+                    break;
+                }
+                
             } catch (IOException ex) {
             }
         }
@@ -120,8 +131,11 @@ public class Server {
                     ArrayList<ClientConnection> toRemove = new ArrayList<ClientConnection>();
                     for (ClientConnection cc : clients) {
                         if (!cc.isAlive()) {
+                            System.out.println("da thoat: "+cc.getPort());
                             Log.add("Dead connection closed: " + cc.getInetAddress() + ":" + cc.getPort() + " on port " + port);
                             toRemove.add(cc);
+                            ListRoomChat.removeParticipantFromRoom(port);
+                            ServerGUITest.updateTableRemoveParticipant(port);
                         }
                     }
                     clients.removeAll(toRemove);
