@@ -195,7 +195,7 @@ public class GUI extends javax.swing.JFrame {
         jLabel3.setVisible(false);
         micVolume.setVisible(false);
         jLabel4.setVisible(false);
-        setSize(getWidth(),getHeight()-75);
+//        setSize(getWidth(),getHeight()-75);
     }
     public static void enableUI(){
 //        micTester.start();

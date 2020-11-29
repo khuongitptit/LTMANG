@@ -29,7 +29,7 @@ public class Client extends Thread {
             Thread.sleep(100);
         } catch (InterruptedException ex) {
         }
-                micThread = new MicThread(toServer);  
+                micThread = new MicThread(toServer, gui);  
                 micThread.start(); 
             } catch (Exception e) { 
                 e.printStackTrace();
@@ -62,9 +62,6 @@ public class Client extends Thread {
                 }
             }
         } catch (Exception e) {
-                        GUI.enableUI();
-            JOptionPane.showMessageDialog(gui, "Phòng đã đầy");
-
             e.printStackTrace();
         }
     }

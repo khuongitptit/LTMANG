@@ -8,15 +8,17 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
+import javax.swing.JOptionPane;
 
 public class MicThread extends Thread {
 
     public static double amplification = 1.0;
     private ObjectOutputStream toServer;
     private TargetDataLine mic;
-
-    public MicThread(ObjectOutputStream toServer) throws LineUnavailableException {
+    private GUI gui;
+    public MicThread(ObjectOutputStream toServer, GUI gui) throws LineUnavailableException {
         this.toServer = toServer;
+        this.gui = gui;
         AudioFormat af = SoundPacket.defaultFormat;
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, null);
         mic = (TargetDataLine) (AudioSystem.getLine(info));
@@ -56,6 +58,8 @@ public class MicThread extends Thread {
                     }
                     toServer.writeObject(m); 
                 } catch (IOException ex) { 
+                    GUI.enableUI();
+                    JOptionPane.showMessageDialog(gui, "Phòng đã đầy");
                     stop();
                 }
             } else {

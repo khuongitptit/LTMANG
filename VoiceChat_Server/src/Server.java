@@ -97,9 +97,9 @@ public class Server {
                     ServerGUITest.updateTableAddParticipant(port);
                     Log.add("New client " + c.getInetAddress() + ":" + c.getPort() + " on port " + port);
                 }else {
-                    DataOutputStream dos = new DataOutputStream(c.getOutputStream());
-                    dos.writeUTF("het cho roi");
-                    dos.close();
+                    ObjectOutputStream oos = new ObjectOutputStream(c.getOutputStream());
+                    oos.writeUTF("het cho roi");
+                    oos.close();
                     break;
                 }
                 

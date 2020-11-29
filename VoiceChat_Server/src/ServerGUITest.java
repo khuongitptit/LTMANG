@@ -1,6 +1,7 @@
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
@@ -77,13 +78,20 @@ public class ServerGUITest extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         list = ListRoomChat.getListRoomChat();
         //default rooms
-        RoomChat room1 = new RoomChat(1999, 2, 0);
-        RoomChat room2 = new RoomChat(2002, 3, 0);
-        RoomChat room3 = new RoomChat(2005, 4, 0);
+        int defaultPort = -1;
+        for(int i=1999;i<40000;i++){
+            try{
+                ServerSocket s = new ServerSocket(i);
+                defaultPort = i;
+                s.close();
+                break;
+            }catch(IOException e){
+            }
+        }
+        if(defaultPort > 0){
+            RoomChat room1 = new RoomChat(defaultPort, 2, 0);
         list.add(room1);
-//        list.add(room2);
-//        list.add(room3);
-        
+        }
         //
         for (RoomChat rc : list) {
             int port = rc.getPort();
@@ -221,7 +229,7 @@ public class ServerGUITest extends javax.swing.JFrame {
         ar.btnAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int port = 2005;
+                int port = -1;
 //                int port = Integer.parseInt(ar.txtPort.getText());
                 for(int i=1999;i<40000;i++){
                     try{
@@ -233,13 +241,15 @@ public class ServerGUITest extends javax.swing.JFrame {
                     }catch(Exception e1){
                     }
                 }
-                int maxP = Integer.parseInt(ar.txtMax.getText());
-                ServerThread serverThread = new ServerThread(port, true);
-                serverThread.start();
-                RoomChat rc = new RoomChat(port, maxP, 0);
-                ListRoomChat.addRoomChat(rc);
-                addRoomToTable(rc);
-                ar.setVisible(false);
+                if(port > 0){
+                    int maxP = Integer.parseInt(ar.txtMax.getText());
+                    ServerThread serverThread = new ServerThread(port, true);
+                    serverThread.start();
+                    RoomChat rc = new RoomChat(port, maxP, 0);
+                    ListRoomChat.addRoomChat(rc);
+                    addRoomToTable(rc);
+                    ar.setVisible(false);
+                }
             }
         });
     }//GEN-LAST:event_btnAddTriggerActionPerformed
