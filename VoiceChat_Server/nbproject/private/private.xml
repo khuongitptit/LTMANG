@@ -6,7 +6,13 @@
         <group>
             <file>file:/C:/Users/khuon/OneDrive/Documents/NetBeansProjects/voicechat/VoiceChat_Server/src/Server.java</file>
             <file>file:/C:/Users/khuon/OneDrive/Documents/NetBeansProjects/voicechat/VoiceChat_Server/src/ListRoomChat.java</file>
+            <file>file:/C:/Users/khuon/OneDrive/Documents/NetBeansProjects/voicechat/VoiceChat_Server/src/Log.java</file>
+            <file>file:/C:/Users/khuon/OneDrive/Documents/NetBeansProjects/voicechat/VoiceChat_Server/src/ServerGUITest.java</file>
             <file>file:/C:/Users/khuon/OneDrive/Documents/NetBeansProjects/voicechat/VoiceChat_Server/src/GUI.java</file>
+            <file>file:/C:/Users/khuon/OneDrive/Documents/NetBeansProjects/voicechat/VoiceChat_Server/src/AddRoom.java</file>
+            <file>file:/C:/Users/khuon/OneDrive/Documents/NetBeansProjects/voicechat/VoiceChat_Server/src/RoomChat.java</file>
+            <file>file:/C:/Users/khuon/OneDrive/Documents/NetBeansProjects/voicechat/VoiceChat_Server/src/ServerThread.java</file>
+            <file>file:/C:/Users/khuon/OneDrive/Documents/NetBeansProjects/voicechat/VoiceChat_Server/src/RoomDetail.java</file>
         </group>
     </open-files>
 </project-private>

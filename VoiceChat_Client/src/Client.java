@@ -61,8 +61,10 @@ public class Client extends Thread {
                     }
                 }
             }
-        } catch (Exception e) { 
+        } catch (Exception e) {
+                        GUI.enableUI();
             JOptionPane.showMessageDialog(gui, "Phòng đã đầy");
+
             e.printStackTrace();
         }
     }

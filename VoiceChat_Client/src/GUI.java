@@ -6,7 +6,7 @@ import javax.sound.sampled.TargetDataLine;
 import javax.swing.JOptionPane;
 
 public class GUI extends javax.swing.JFrame {
-    private MicTester micTester;
+    private static MicTester micTester;
     //this class is used to test the microphone. it manages the volume meter
     private class MicTester extends Thread{
         private TargetDataLine mic = null;
@@ -184,13 +184,7 @@ public class GUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        try {
-            new Client(this, txtIP.getText(), Integer.parseInt(txtPort.getText())).start(); //connect to specified server at specified port
-        } catch (Exception ex) { //connection failed
-            JOptionPane.showMessageDialog(rootPane, ex,"Error",JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+    public void disableUI(){
         //connected, disable buttons
         micTester.close();
         txtIP.setEnabled(false);
@@ -202,6 +196,26 @@ public class GUI extends javax.swing.JFrame {
         micVolume.setVisible(false);
         jLabel4.setVisible(false);
         setSize(getWidth(),getHeight()-75);
+    }
+    public static void enableUI(){
+//        micTester.start();
+        txtIP.setEnabled(true);
+        txtPort.setEnabled(true);
+        btnConnect.setEnabled(true);
+        micLevel.setVisible(true);
+        jLabel1.setEnabled(true);
+        jLabel3.setVisible(true);
+        micVolume.setVisible(true);
+        jLabel4.setVisible(true);
+    }
+    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
+        try {
+            new Client(this, txtIP.getText(), Integer.parseInt(txtPort.getText())).start(); //connect to specified server at specified port
+        } catch (Exception ex) { //connection failed
+            JOptionPane.showMessageDialog(rootPane, ex,"Error",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        disableUI();
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void micVolumeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_micVolumeStateChanged
@@ -255,15 +269,15 @@ public class GUI extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnConnect;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private static javax.swing.JButton btnConnect;
+    private static javax.swing.JLabel jLabel1;
+    private static javax.swing.JLabel jLabel3;
+    private static javax.swing.JLabel jLabel4;
+    private static javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JProgressBar micLevel;
-    private javax.swing.JSlider micVolume;
-    private javax.swing.JTextField txtIP;
-    private javax.swing.JTextField txtPort;
+    private static javax.swing.JProgressBar micLevel;
+    private static javax.swing.JSlider micVolume;
+    private static javax.swing.JTextField txtIP;
+    private static javax.swing.JTextField txtPort;
     // End of variables declaration//GEN-END:variables
 }

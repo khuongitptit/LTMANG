@@ -99,6 +99,7 @@ public class Server {
                 }else {
                     DataOutputStream dos = new DataOutputStream(c.getOutputStream());
                     dos.writeUTF("het cho roi");
+                    dos.close();
                     break;
                 }
                 
@@ -131,6 +132,7 @@ public class Server {
                     ArrayList<ClientConnection> toRemove = new ArrayList<ClientConnection>();
                     for (ClientConnection cc : clients) {
                         if (!cc.isAlive()) {
+                        System.out.println("state: "+cc.getState());
                             System.out.println("da thoat: "+cc.getPort());
                             Log.add("Dead connection closed: " + cc.getInetAddress() + ":" + cc.getPort() + " on port " + port);
                             toRemove.add(cc);

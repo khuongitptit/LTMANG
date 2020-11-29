@@ -1,4 +1,7 @@
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -35,6 +38,12 @@ public class ServerGUITest extends javax.swing.JFrame {
             }
         }
     }
+    static void addRoomToTable(RoomChat rc){
+        int port = rc.getPort();
+        int maxParticipant = rc.getMaxParticipant();
+        int currentParticipant = rc.getCurrentParticipant();
+        model.addRow(new Object[]{roomTable.getRowCount()+1,port,maxParticipant,currentParticipant});
+    }
 //    static boolean isRoomAvailable(int port){
 //        for(int i=0; i< roomTable.getRowCount();i++){
 //            if(Integer.parseInt(roomTable.getValueAt(i, 1).toString()) == port){
@@ -45,6 +54,23 @@ public class ServerGUITest extends javax.swing.JFrame {
 //        }
 //        return false;
 //    }
+    public void showLog(){
+                new Thread() { //start logger
+            @Override
+            public void run() {
+                for (;;) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                    }
+                    if (!Log.get().equals(log.getText())) {
+                        log.setText(Log.get());
+                        log.getCaret().setDot(Log.get().length());
+                    }
+                }
+            }
+        }.start();
+    }
     public ServerGUITest() {
         initComponents();
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -55,8 +81,8 @@ public class ServerGUITest extends javax.swing.JFrame {
         RoomChat room2 = new RoomChat(2002, 3, 0);
         RoomChat room3 = new RoomChat(2005, 4, 0);
         list.add(room1);
-        list.add(room2);
-        list.add(room3);
+//        list.add(room2);
+//        list.add(room3);
         
         //
         for (RoomChat rc : list) {
@@ -65,8 +91,6 @@ public class ServerGUITest extends javax.swing.JFrame {
             int currentParticipant = rc.getCurrentParticipant();
             ServerThread serverThread = new ServerThread(port, true);
             serverThread.start();
-            ServerLog serverLog = new ServerLog(port);
-            serverLog.start();
         }
         
         model = (DefaultTableModel) roomTable.getModel();
@@ -77,6 +101,7 @@ public class ServerGUITest extends javax.swing.JFrame {
             int currentParticipant = list.get(i).getCurrentParticipant();
             model.addRow(new Object[]{i+1, port, maxParticipant, currentParticipant});
         }
+        showLog();
     }
 
     /**
@@ -90,6 +115,12 @@ public class ServerGUITest extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         roomTable = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        log = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        btnAddTrigger = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -111,21 +142,60 @@ public class ServerGUITest extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(roomTable);
 
+        log.setColumns(20);
+        log.setRows(5);
+        jScrollPane2.setViewportView(log);
+
+        jLabel1.setText("Danh sách phòng");
+
+        jLabel2.setText("Log");
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel3.setText("SERVER");
+
+        btnAddTrigger.setText("Thêm phòng");
+        btnAddTrigger.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddTriggerActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(138, 138, 138)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(155, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1)
+                            .addComponent(jScrollPane2)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                        .addComponent(btnAddTrigger))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(223, 223, 223)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(82, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49))
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAddTrigger))
+                .addGap(29, 29, 29)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34))
         );
 
         pack();
@@ -143,6 +213,36 @@ public class ServerGUITest extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_roomTableMouseClicked
+    AddRoom ar = new AddRoom();
+    private void btnAddTriggerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddTriggerActionPerformed
+        // TODO add your handling code here:
+        
+        ar.setVisible(true);
+        ar.btnAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int port = 2005;
+//                int port = Integer.parseInt(ar.txtPort.getText());
+                for(int i=1999;i<40000;i++){
+                    try{
+                        ServerSocket ss = new ServerSocket(i);
+                        port = i;
+                        ss.close();
+                        break;
+                        
+                    }catch(Exception e1){
+                    }
+                }
+                int maxP = Integer.parseInt(ar.txtMax.getText());
+                ServerThread serverThread = new ServerThread(port, true);
+                serverThread.start();
+                RoomChat rc = new RoomChat(port, maxP, 0);
+                ListRoomChat.addRoomChat(rc);
+                addRoomToTable(rc);
+                ar.setVisible(false);
+            }
+        });
+    }//GEN-LAST:event_btnAddTriggerActionPerformed
 
     /**
      * @param args the command line arguments
@@ -180,7 +280,13 @@ public class ServerGUITest extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddTrigger;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextArea log;
     public static javax.swing.JTable roomTable;
     // End of variables declaration//GEN-END:variables
 }

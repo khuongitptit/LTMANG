@@ -7,7 +7,9 @@ public class ListRoomChat {
     public static ArrayList<RoomChat> getListRoomChat() {
         return listRoomChat;
     }
-  
+    public static void addRoomChat(RoomChat rc){
+        listRoomChat.add(rc);
+    }
     public static boolean addParticipantToRoom(int port, Participant p){
         for(RoomChat rc : listRoomChat){
             if(rc.getPort() == port){
