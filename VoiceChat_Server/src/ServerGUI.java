@@ -2,8 +2,11 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -11,39 +14,41 @@ import javax.swing.table.DefaultTableModel;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author khuon
  */
-public class ServerGUITest extends javax.swing.JFrame {
+public class ServerGUI extends javax.swing.JFrame {
 
     /**
      * Creates new form ServerGUITest
      */
     ArrayList<RoomChat> list;
     static DefaultTableModel model;
-    static void updateTableAddParticipant(int port){
-        for(int i=0; i< roomTable.getRowCount();i++){
-            if(Integer.parseInt(roomTable.getValueAt(i, 1).toString()) == port){
+
+    static void updateTableAddParticipant(int port) {
+        for (int i = 0; i < roomTable.getRowCount(); i++) {
+            if (Integer.parseInt(roomTable.getValueAt(i, 1).toString()) == port) {
                 int current = Integer.parseInt(roomTable.getValueAt(i, 3).toString());
-                roomTable.setValueAt(current+1, i, 3);
+                roomTable.setValueAt(current + 1, i, 3);
             }
         }
     }
-    static void updateTableRemoveParticipant(int port){
-        for(int i=0; i< roomTable.getRowCount();i++){
-            if(Integer.parseInt(roomTable.getValueAt(i, 1).toString()) == port){
+
+    static void updateTableRemoveParticipant(int port) {
+        for (int i = 0; i < roomTable.getRowCount(); i++) {
+            if (Integer.parseInt(roomTable.getValueAt(i, 1).toString()) == port) {
                 int current = Integer.parseInt(roomTable.getValueAt(i, 3).toString());
-                roomTable.setValueAt(current-1, i, 3);
+                roomTable.setValueAt(current - 1, i, 3);
             }
         }
     }
-    static void addRoomToTable(RoomChat rc){
+
+    static void addRoomToTable(RoomChat rc) {
         int port = rc.getPort();
         int maxParticipant = rc.getMaxParticipant();
         int currentParticipant = rc.getCurrentParticipant();
-        model.addRow(new Object[]{roomTable.getRowCount()+1,port,maxParticipant,currentParticipant});
+        model.addRow(new Object[]{roomTable.getRowCount() + 1, port, maxParticipant, currentParticipant});
     }
 //    static boolean isRoomAvailable(int port){
 //        for(int i=0; i< roomTable.getRowCount();i++){
@@ -55,8 +60,9 @@ public class ServerGUITest extends javax.swing.JFrame {
 //        }
 //        return false;
 //    }
-    public void showLog(){
-                new Thread() { //start logger
+
+    public void showLog() {
+        new Thread() { //start logger
             @Override
             public void run() {
                 for (;;) {
@@ -72,25 +78,26 @@ public class ServerGUITest extends javax.swing.JFrame {
             }
         }.start();
     }
-    public ServerGUITest() {
+
+    public ServerGUI() {
         initComponents();
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         list = ListRoomChat.getListRoomChat();
         //default rooms
         int defaultPort = -1;
-        for(int i=1999;i<40000;i++){
-            try{
+        for (int i = 1999; i < 40000; i++) {
+            try {
                 ServerSocket s = new ServerSocket(i);
                 defaultPort = i;
                 s.close();
                 break;
-            }catch(IOException e){
+            } catch (IOException e) {
             }
         }
-        if(defaultPort > 0){
+        if (defaultPort > 0) {
             RoomChat room1 = new RoomChat(defaultPort, 2, 0);
-        list.add(room1);
+            list.add(room1);
         }
         //
         for (RoomChat rc : list) {
@@ -100,14 +107,14 @@ public class ServerGUITest extends javax.swing.JFrame {
             ServerThread serverThread = new ServerThread(port, true);
             serverThread.start();
         }
-        
+
         model = (DefaultTableModel) roomTable.getModel();
         model.setRowCount(0);
-        for(int i=0;i<list.size();i++){
+        for (int i = 0; i < list.size(); i++) {
             int port = list.get(i).getPort();
             int maxParticipant = list.get(i).getMaxParticipant();
             int currentParticipant = list.get(i).getCurrentParticipant();
-            model.addRow(new Object[]{i+1, port, maxParticipant, currentParticipant});
+            model.addRow(new Object[]{i + 1, port, maxParticipant, currentParticipant});
         }
         showLog();
     }
@@ -212,43 +219,49 @@ public class ServerGUITest extends javax.swing.JFrame {
     private void roomTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roomTableMouseClicked
         // TODO add your handling code here:
         int selectedPort = Integer.parseInt(model.getValueAt(roomTable.getSelectedRow(), 1).toString());
-        for(RoomChat rc : ListRoomChat.getListRoomChat()){
-            if(rc.getPort() == selectedPort){
+        for (RoomChat rc : ListRoomChat.getListRoomChat()) {
+            if (rc.getPort() == selectedPort) {
                 ArrayList<Participant> listP = rc.getParticipants();
                 new RoomDetail(selectedPort, listP).setVisible(true);
             }
-            
+
         }
-        
+
     }//GEN-LAST:event_roomTableMouseClicked
+    public int scanPort() {
+        int port = -1;
+        for (int i = 1999; i < 65000; i++) {
+            try {
+                ServerSocket s = new ServerSocket(i);
+                port = i;
+                s.close();
+                break;
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }
+        return port;
+    }
     AddRoom ar = new AddRoom();
     private void btnAddTriggerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddTriggerActionPerformed
         // TODO add your handling code here:
-        
+
         ar.setVisible(true);
         ar.btnAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int port = -1;
-//                int port = Integer.parseInt(ar.txtPort.getText());
-                for(int i=1999;i<40000;i++){
-                    try{
-                        ServerSocket ss = new ServerSocket(i);
-                        port = i;
-                        ss.close();
-                        break;
-                        
-                    }catch(Exception e1){
-                    }
-                }
-                if(port > 0){
+                int port = scanPort();
+                if (port > 0) {
                     int maxP = Integer.parseInt(ar.txtMax.getText());
                     ServerThread serverThread = new ServerThread(port, true);
                     serverThread.start();
                     RoomChat rc = new RoomChat(port, maxP, 0);
                     ListRoomChat.addRoomChat(rc);
                     addRoomToTable(rc);
+                    ar.txtMax.setText("");
                     ar.setVisible(false);
+                }else {
+                    JOptionPane.showMessageDialog(rootPane, "Không thể tạo phòng");
                 }
             }
         });
@@ -271,20 +284,21 @@ public class ServerGUITest extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ServerGUITest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ServerGUITest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ServerGUITest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ServerGUITest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ServerGUITest().setVisible(true);
+                new ServerGUI().setVisible(true);
             }
         });
     }

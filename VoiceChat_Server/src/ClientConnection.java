@@ -55,7 +55,6 @@ public class ClientConnection extends Thread {
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
-            System.out.println("haha");
             try {
                 socket.close();
                 Log.add("ERROR " + getInetAddress() + ":" + getPort() + " " + ex);

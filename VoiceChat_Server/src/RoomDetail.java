@@ -62,7 +62,7 @@ public class RoomDetail extends javax.swing.JFrame {
 
             },
             new String [] {
-                "STT", "Client Address", "Port"
+                "STT", "IP Address", "Remote Port"
             }
         ));
         jScrollPane1.setViewportView(tblParticipants);
@@ -76,7 +76,7 @@ public class RoomDetail extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(161, 161, 161)
                         .addComponent(jLabel3)
-                        .addGap(29, 29, 29)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblPort, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(65, 65, 65)

@@ -94,7 +94,7 @@ public class Server {
                     addToClients(cc);
                     Participant p = new Participant(c.getInetAddress().toString(), c.getPort());
                     ListRoomChat.addParticipantToRoom(port,p);
-                    ServerGUITest.updateTableAddParticipant(port);
+                    ServerGUI.updateTableAddParticipant(port);
                     Log.add("New client " + c.getInetAddress() + ":" + c.getPort() + " on port " + port);
                 }else {
                     ObjectOutputStream oos = new ObjectOutputStream(c.getOutputStream());
@@ -132,12 +132,10 @@ public class Server {
                     ArrayList<ClientConnection> toRemove = new ArrayList<ClientConnection>();
                     for (ClientConnection cc : clients) {
                         if (!cc.isAlive()) {
-                        System.out.println("state: "+cc.getState());
-                            System.out.println("da thoat: "+cc.getPort());
                             Log.add("Dead connection closed: " + cc.getInetAddress() + ":" + cc.getPort() + " on port " + port);
                             toRemove.add(cc);
                             ListRoomChat.removeParticipantFromRoom(port);
-                            ServerGUITest.updateTableRemoveParticipant(port);
+                            ServerGUI.updateTableRemoveParticipant(port);
                         }
                     }
                     clients.removeAll(toRemove);
